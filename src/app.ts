@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors"; // Import the cors package
 //
+import { userRouter } from "./routers/user";
+//
 const app = express();
 app.use(express.json()); // Middleware to parse JSON requests
 dotenv.config();
@@ -33,6 +35,8 @@ app.get("/", (req, res) => {
 });
 
 //
+// routes
+app.use("/users", userRouter);
 //
 const PORT = process.env.PORT || 3006;
 
