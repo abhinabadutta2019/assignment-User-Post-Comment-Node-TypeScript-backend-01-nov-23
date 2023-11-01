@@ -5,7 +5,7 @@ import { User } from "../models/User"; // Import the User model
 // Controller function to create a new post
 const createPost = async (req: Request, res: Response) => {
   try {
-    const { content, username } = req.body; // Assuming you receive these in the request body
+    const { content, username } = req.body;
 
     // Find the user by username
     const user = await User.findOne({ username });
