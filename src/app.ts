@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors"; // Import the cors package
 //
 import { userRouter } from "./routers/user";
+import { postRouter } from "./routers/post";
 //
 const app = express();
 app.use(express.json()); // Middleware to parse JSON requests
@@ -37,6 +38,7 @@ app.get("/", (req, res) => {
 //
 // routes
 app.use("/users", userRouter);
+app.use("/posts", postRouter);
 //
 const PORT = process.env.PORT || 3006;
 
