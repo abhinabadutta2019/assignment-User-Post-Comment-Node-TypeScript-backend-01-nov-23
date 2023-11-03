@@ -33,7 +33,7 @@ const createPost = async (req: CustomRequest, res: Response) => {
 
     res.status(201).json(savedPost);
   } catch (error) {
-    res.status(400).json(error); // Handle any validation or database errors
+    res.status(500).json(error); // Handle any validation or database errors
   }
 };
 //
@@ -73,5 +73,25 @@ const addComment = async (req: CustomRequest, res: Response) => {
     res.status(500).json(error);
   }
 };
+//
+const ownAllPost = async (req: CustomRequest, res: Response) => {
+  try {
+    //
+    const middlewareUser = req.user;
+    // console.log(middlewareUser, "middlewareUser");
 
-export { createPost, addComment };
+    const posts = await Post.find({ user: middlewareUser._id });
+
+    if (!posts) {
+      return res.status(404).json({ message: "No posts found for this user" });
+    }
+
+    res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+//
+
+export { createPost, addComment, ownAllPost };
