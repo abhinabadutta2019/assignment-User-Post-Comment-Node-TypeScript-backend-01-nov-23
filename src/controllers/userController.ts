@@ -1,8 +1,14 @@
 import { Request, Response } from "express";
 import { User } from "../models/User";
 import { UserSchema } from "../validators/userValidator";
-// import { fromZodError } from "zod-validation-error";
-// import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+//
+const createToken = (_id: string) => {
+  return jwt.sign({ _id: _id }, process.env.JWT_SECRET as string, {
+    expiresIn: "1h",
+  });
+};
+//
 
 const getAllUser = async (req: Request, res: Response) => {
   try {
@@ -44,7 +50,11 @@ const loginUser = async (req: Request, res: Response) => {
 
     // Check if the user exists and compare passwords
     if (user && user.password === password) {
-      res.status(200).json({ message: "Login successful" });
+      // creating token
+      const token = createToken(user._id.toString());
+      res.status(200).json({ token: token });
+      //
+      //
     } else {
       res.status(401).json({ error: "Invalid username or password" });
     }

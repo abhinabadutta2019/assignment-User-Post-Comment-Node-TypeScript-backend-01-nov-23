@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { Post } from "../models/Post"; // Import the Post model
 import { User } from "../models/User"; // Import the User model
 
+//
+
 // Controller function to create a new post
 const createPost = async (req: Request, res: Response) => {
   try {
