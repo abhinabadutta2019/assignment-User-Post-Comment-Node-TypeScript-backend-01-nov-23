@@ -3,23 +3,28 @@ import { Post } from "../models/Post"; // Import the Post model
 import { User } from "../models/User"; // Import the User model
 
 //
+interface CustomRequest extends Request {
+  //as no question mark - was the reason of error
+  user?: any; // Replace 'any' with the actual user data type
+}
+//
 
 // Controller function to create a new post
-const createPost = async (req: Request, res: Response) => {
+const createPost = async (req: CustomRequest, res: Response) => {
   try {
-    const { content, username } = req.body;
+    //
+    // console.log(req.user, "req.user");
 
-    // Find the user by username
-    const user = await User.findOne({ username });
+    const middlewareUser = req.user;
+    console.log(middlewareUser, "middlewareUser");
 
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
+    //
+    const { content } = req.body;
 
     // Create a new post
     const newPost = new Post({
-      content,
-      user: user._id,
+      content: content,
+      user: middlewareUser,
       comments: [],
     });
 

@@ -17,12 +17,19 @@ const verifyJWT = async (
 ) => {
   try {
     if (!req.headers.authorization) {
-      return res.status(400).json();
+      return res.status(400).json({ message: "no token found" });
     }
+    //
+    console.log(
+      req.headers.authorization,
+      "req.headers.authorization from verifyJWT"
+    );
+
+    //
     const authHeader = req.headers.authorization;
 
-    // console.log(authHeader, "authHeader from middleware");
     const token = authHeader.split(" ")[1];
+    //
 
     const result = jwt.verify(
       token,
@@ -33,7 +40,8 @@ const verifyJWT = async (
 
     //sending the user._id in the routes
     req.user = await User.findOne({ _id: userID }).select("_id");
-    console.log(req.user, "user");
+    // req.user = await User.findOne({ _id: userID });
+    // console.log(req.user, "user");
 
     // console.log(_id, "_id");
     next();
