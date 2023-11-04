@@ -14,7 +14,7 @@ dotenv.config();
 const corsOptions = {
   origin: [
     "https://assignment-post-comment-react-frontend.onrender.com",
-    "http://localhost:3000",
+    "http://localhost:3053",
   ],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true, // If your API supports cookies or authentication headers
