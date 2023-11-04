@@ -9,7 +9,18 @@ import { postRouter } from "./routers/post";
 const app = express();
 app.use(express.json()); // Middleware to parse JSON requests
 dotenv.config();
-app.use(cors()); // Enable CORS for all routes
+//
+// Configure CORS to allow requests from your frontend URL
+const corsOptions = {
+  origin: [
+    "https://assignment-post-comment-react-frontend.onrender.com",
+    "http://localhost:3000",
+  ],
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true, // If your API supports cookies or authentication headers
+};
+// app.use(cors()); // Enable CORS for all routes
+app.use(cors(corsOptions));
 
 //
 ///////mongoDB cloud//////////////////
