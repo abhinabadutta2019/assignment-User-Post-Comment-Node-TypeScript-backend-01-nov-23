@@ -12,6 +12,9 @@ interface CustomRequest extends Request {
 // Controller function to create a new post
 const createPost = async (req: CustomRequest, res: Response) => {
   try {
+    // console.log(req);
+    // console.log(req.user, "req.user from createPost");
+
     //
     // console.log(req.user, "req.user");
 
@@ -94,7 +97,10 @@ const ownAllPost = async (req: CustomRequest, res: Response) => {
 //
 const allPosts = async (req: CustomRequest, res: Response) => {
   try {
-    const posts = await Post.find().populate({ path: "comments.user" });
+    const posts = await Post.find().populate({
+      path: "comments.user",
+      select: "username",
+    });
 
     // console.log(posts, "posts--allPosts ");
 
