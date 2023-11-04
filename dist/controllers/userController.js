@@ -12,10 +12,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.loginUser = exports.registerUser = exports.getAllUser = void 0;
 const User_1 = require("../models/User");
-const userValidator_1 = require("../validators/userValidator");
-const zod_validation_error_1 = require("zod-validation-error");
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+//
+const createToken = (_id) => {
+    return jsonwebtoken_1.default.sign({ _id: _id }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+    });
+};
+//
 const getAllUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const users = yield User_1.User.find({});
@@ -26,65 +32,46 @@ const getAllUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(500).json(err);
     }
 });
+exports.getAllUser = getAllUser;
 //
+// Controller function to register a new user
 const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        //
-        console.log(req.body, "req.body of registerUser");
-        //
         const { username, password } = req.body;
-        //
-        //
-        const validatedTask = userValidator_1.UserSchema.safeParse({
-            username: username,
-            password: password,
+        // Create a new user
+        const newUser = new User_1.User({
+            username,
+            password,
         });
-        //
-        if (!validatedTask.success) {
-            //zod messa in a string showing
-            return res
-                .status(400)
-                .json({ error: (0, zod_validation_error_1.fromZodError)(validatedTask.error).message });
-        }
-        //
-        const validatedData = validatedTask.data;
-        // Generate a salt and hash the user's password
-        const salt = yield bcryptjs_1.default.genSalt(10);
-        const hashedPassword = yield bcryptjs_1.default.hash(validatedData.password, salt);
-        //
-        const user = new User_1.User({
-            username: validatedData.username,
-            password: hashedPassword,
-        });
-        yield user.save();
-        res.json({ user: user, message: "user created" });
+        // Save the user to the database
+        const savedUser = yield newUser.save();
+        res.status(201).json(savedUser);
     }
-    catch (err) {
-        console.log(err);
-        res.status(500).json(err);
+    catch (error) {
+        res.status(400).json(error); // Handle any validation or database errors
     }
 });
-//
+exports.registerUser = registerUser;
+// Controller function to log in an existing user
 const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    //
-    console.log(req.body, "req.body of loginUser");
-    //
     try {
         const { username, password } = req.body;
-        // need to be findOne(find giving error )
-        const user = yield User_1.User.findOne({ username: username });
-        if (!user) {
-            return res.status(404).json({ messsage: "user not found" });
+        // Find the user by username
+        const user = yield User_1.User.findOne({ username });
+        // Check if the user exists and compare passwords
+        if (user && user.password === password) {
+            // creating token
+            const token = createToken(user._id.toString());
+            res.status(200).json({ token: token });
+            //
+            //
         }
-        console.log(user.password, "user");
-        const isMatch = yield bcryptjs_1.default.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(401).json({ message: "Incorrect password" });
+        else {
+            res.status(401).json({ error: "Invalid username or password" });
         }
-        res.status(200).json({ user: user, message: "login successful" });
     }
-    catch (err) {
-        console.log(err);
-        res.status(500).json(err);
+    catch (error) {
+        res.status(400).json(error); // Handle any errors
     }
 });
+exports.loginUser = loginUser;

@@ -17,6 +17,9 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const cors_1 = __importDefault(require("cors")); // Import the cors package
 //
+const user_1 = require("./routers/user");
+const post_1 = require("./routers/post");
+//
 const app = (0, express_1.default)();
 app.use(express_1.default.json()); // Middleware to parse JSON requests
 dotenv_1.default.config();
@@ -47,6 +50,9 @@ app.get("/", (req, res) => {
     res.send("Hello2");
 });
 //
+// routes
+app.use("/users", user_1.userRouter);
+app.use("/posts", post_1.postRouter);
 //
 const PORT = process.env.PORT || 3006;
 app.listen(PORT, () => console.log(`server running at ${PORT}`));
