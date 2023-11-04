@@ -97,12 +97,13 @@ const ownAllPost = async (req: CustomRequest, res: Response) => {
 //
 const allPosts = async (req: CustomRequest, res: Response) => {
   try {
-    const posts = await Post.find().populate({
-      path: "comments.user",
-      select: "username",
-    });
-
-    // console.log(posts, "posts--allPosts ");
+    const posts = await Post.find()
+      .populate("user")
+      .populate({
+        path: "comments.user",
+        select: "username",
+      })
+      .sort({ createdAt: -1 }); // Sort by creation date in descending order
 
     if (!posts) {
       return res.status(404).json({ message: "No posts found" });

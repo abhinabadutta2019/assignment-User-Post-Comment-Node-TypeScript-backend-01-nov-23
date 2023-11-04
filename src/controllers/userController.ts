@@ -34,8 +34,10 @@ const registerUser = async (req: Request, res: Response) => {
 
     // Save the user to the database
     const savedUser = await newUser.save();
-
-    res.status(201).json(savedUser);
+    if (savedUser) {
+      const token = createToken(savedUser._id.toString());
+      res.status(201).json({ token: token });
+    }
   } catch (error) {
     res.status(400).json(error); // Handle any validation or database errors
   }
